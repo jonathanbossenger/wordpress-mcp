@@ -8,6 +8,7 @@ use Automattic\WordpressMcp\Resources\McpGeneralSiteInfo;
 use Automattic\WordpressMcp\Tools\McpSiteInfo;
 use Automattic\WordpressMcp\Tools\McpUsersTools;
 use Automattic\WordpressMcp\Tools\McpWooOrders;
+use Automattic\WordpressMcp\Tools\McpLessonsTools;
 use Automattic\WordpressMcp\Tools\McpWooProducts;
 use Automattic\WordpressMcp\Prompts\McpGetSiteInfo as McpGetSiteInfoPrompt;
 use Automattic\WordpressMcp\Prompts\McpAnalyzeSales;
@@ -136,6 +137,7 @@ class WpMcp {
 		new McpUsersTools();
 		new McpWooProducts();
 		new McpWooOrders();
+        new McpLessonsTools();
 	}
 
 	/**
