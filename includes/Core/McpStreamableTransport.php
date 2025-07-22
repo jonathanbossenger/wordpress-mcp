@@ -143,7 +143,7 @@ class McpStreamableTransport extends McpTransportBase {
 	 */
 	private function handle_post_request( $request ) {
 		try {
-			// Validate Accept header - client MUST include both content types
+			// Validate Accept header - client MUST include both content types.
 			$accept_header = $request->get_header( 'accept' );
 			if ( ! $accept_header ||
 				strpos( $accept_header, 'application/json' ) === false ||
@@ -154,7 +154,7 @@ class McpStreamableTransport extends McpTransportBase {
 				);
 			}
 
-			// Validate content type - be more flexible with content-type headers
+			// Validate content type - be more flexible with content-type headers.
 			$content_type = $request->get_header( 'content-type' );
 			if ( $content_type && strpos( $content_type, 'application/json' ) === false ) {
 				return new WP_REST_Response(
@@ -163,7 +163,7 @@ class McpStreamableTransport extends McpTransportBase {
 				);
 			}
 
-			// Get the JSON-RPC message(s) - can be single message or array batch
+			// Get the JSON-RPC message(s) - can be single message or array batch.
 			$body = $request->get_json_params();
 			if ( null === $body ) {
 				return new WP_REST_Response(
@@ -172,19 +172,19 @@ class McpStreamableTransport extends McpTransportBase {
 				);
 			}
 
-			// Handle both single messages and batched arrays
+			// Handle both single messages and batched arrays.
 			$messages                       = is_array( $body ) && isset( $body[0] ) ? $body : array( $body );
 			$has_requests                   = false;
 			$has_notifications_or_responses = false;
 
-			// Validate all messages and categorize them
+			// Validate all messages and categorize them.
 			foreach ( $messages as $message ) {
 				$validation_result = McpErrorHandler::validate_jsonrpc_message( $message );
 				if ( true !== $validation_result ) {
 					return new WP_REST_Response( $validation_result, 400 );
 				}
 
-				// Check if it's a request (has id and method) or notification/response
+				// Check if it's a request (has id and method) or notification/response.
 				if ( isset( $message['method'] ) && isset( $message['id'] ) ) {
 					$has_requests = true;
 				} else {
@@ -192,12 +192,12 @@ class McpStreamableTransport extends McpTransportBase {
 				}
 			}
 
-			// If only notifications or responses, return 202 Accepted with no body
+			// If only notifications or responses, return 202 Accepted with no body.
 			if ( $has_notifications_or_responses && ! $has_requests ) {
 				return new WP_REST_Response( null, 202 );
 			}
 
-			// Process requests and return JSON response
+			// Process requests and return JSON response.
 			$results        = array();
 			$has_initialize = false;
 			foreach ( $messages as $message ) {
@@ -210,7 +210,7 @@ class McpStreamableTransport extends McpTransportBase {
 				}
 			}
 
-			// Return single result or batch
+			// Return single result or batch.
 			$response_body = count( $results ) === 1 ? $results[0] : $results;
 
 			$headers = array(
@@ -222,7 +222,7 @@ class McpStreamableTransport extends McpTransportBase {
 			return new WP_REST_Response( $response_body, 200, $headers );
 
 		} catch ( \Throwable $exception ) {
-			// Handle any unexpected exceptions
+			// Handle any unexpected exceptions.
 			McpErrorHandler::log_error( 'Unexpected error in handle_post_request', array( 'exception' => $exception->getMessage() ) );
 			return new WP_REST_Response(
 				McpErrorHandler::handle_exception( $exception, $this->request_id ),
@@ -241,10 +241,10 @@ class McpStreamableTransport extends McpTransportBase {
 		$this->request_id = (int) $message['id'];
 		$params           = $message['params'] ?? array();
 
-		// Route the request using the base class
+		// Route the request using the base class.
 		$result = $this->route_request( $message['method'], $params, $this->request_id );
 
-		// Check if the result contains an error
+		// Check if the result contains an error.
 		if ( isset( $result['error'] ) ) {
 			return $this->format_error_response( $result, $this->request_id );
 		}
@@ -309,7 +309,7 @@ class McpStreamableTransport extends McpTransportBase {
 			);
 		}
 
-		// If it's not already a proper error response, make it one
+		// If it's not already a proper error response, make it one.
 		return McpErrorHandler::internal_error( $request_id, 'Invalid error response format' );
 	}
 }
