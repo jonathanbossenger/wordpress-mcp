@@ -53,7 +53,7 @@ class SchemaValidator {
 		}
 
 		// Load and decode schema.
-		$schema_content = file_get_contents( $schema_file );
+		$schema_content = file_get_contents( $schema_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( false === $schema_content ) {
 			throw new \InvalidArgumentException( esc_html( "Failed to read schema file: {$schema_name}.json" ) );
 		}
