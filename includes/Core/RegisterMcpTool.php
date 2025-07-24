@@ -344,19 +344,19 @@ class RegisterMcpTool {
 	/**
 	 * Recursively remove all null values from an array.
 	 *
-	 * @param array $array The array to clean.
+	 * @param array $data The array to clean.
 	 * @return array The cleaned array.
 	 */
-	private function remove_null_recursive( array $array ): array {
-		foreach ( $array as $key => &$value ) {
+	private function remove_null_recursive( array $data ): array {
+		foreach ( $data as $key => &$value ) {
 			if ( is_array( $value ) ) {
 				$value = $this->remove_null_recursive( $value );
 			} elseif ( is_null( $value ) ) {
-				unset( $array[ $key ] );
+				unset( $data[ $key ] );
 			}
 		}
 		unset( $value ); // break reference.
-		return $array;
+		return $data;
 	}
 
 	/**
