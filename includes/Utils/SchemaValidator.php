@@ -488,9 +488,30 @@ class SchemaValidator {
 			return 'string';
 		}
 		if ( is_array( $value ) ) {
-			return array_is_list( $value ) ? 'array' : 'object';
+			return self::is_list( $value ) ? 'array' : 'object';
 		}
 
 		return 'unknown';
+	}
+
+	/**
+	 * Polyfill for array_is_list() for PHP 8.0 compatibility.
+	 *
+	 * @param array $array The array to check.
+	 * @return bool True if the array is a list, false otherwise.
+	 */
+	private static function is_list( array $array ): bool {
+		if ( function_exists( 'array_is_list' ) ) {
+			return array_is_list( $array );
+		}
+
+		$index = 0;
+		foreach ( $array as $key => $value ) {
+			if ( $key !== $index++ ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
