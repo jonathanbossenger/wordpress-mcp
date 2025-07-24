@@ -105,7 +105,7 @@ class RegisterMcpTool {
 			}
 			$input_schema['properties'][ $arg_name ] = array(
 				'type'        => $type,
-				'description' => $arg_schema['description'],
+				'description' => $this->get_description_with_fallback( $arg_schema['description'], $arg_name ),
 			);
 
 			// Handle array items if present.
@@ -259,6 +259,25 @@ class RegisterMcpTool {
 		if ( ! in_array( $this->args['rest_alias']['method'], array( 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' ), true ) ) {
 			throw new InvalidArgumentException( 'The method must be one of the following: GET, POST, PUT, PATCH, DELETE.' );
 		}
+	}
+
+	/**
+	 * Get description with fallback when null or empty.
+	 *
+	 * @param string|null $description The original description.
+	 * @param string      $arg_name The argument name to use as fallback.
+	 * @return string The description with fallback.
+	 */
+	private function get_description_with_fallback( ?string $description, string $arg_name ): string {
+		// If description exists and is not empty, return it.
+		if ( ! empty( $description ) ) {
+			return $description;
+		}
+
+		// If description is null or empty, create a meaningful fallback.
+		// Use the tool name and argument name to create a descriptive text.
+		$tool_name = $this->args['name'] ?? 'tool';
+		return "Parameter '{$arg_name}' for {$tool_name}";
 	}
 
 	/**
