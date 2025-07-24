@@ -22,6 +22,7 @@ use Automattic\WordpressMcp\Core\WpMcp;
 use Automattic\WordpressMcp\Core\McpStdioTransport;
 use Automattic\WordpressMcp\Admin\Settings;
 use Automattic\WordpressMcp\Auth\JwtAuth;
+use Automattic\WordpressMcp\Cli\ValidateToolsCommand;
 
 define( 'WORDPRESS_MCP_VERSION', '0.2.4' );
 define( 'WORDPRESS_MCP_PATH', plugin_dir_path( __FILE__ ) );
@@ -67,5 +68,19 @@ function init_wordpress_mcp() {
 	new JwtAuth();
 }
 
-// Initialize the plugin on plugins_loaded to ensure all dependencies are available.
-add_action( 'plugins_loaded', 'init_wordpress_mcp' );
+// Initialize the plugin.
+add_action( 'init', 'init_wordpress_mcp' );
+
+/**
+ * Register WP-CLI commands when WP-CLI is available.
+ */
+function register_wordpress_mcp_cli_commands() {
+	if ( ! class_exists( '\WP_CLI' ) ) {
+		return;
+	}
+
+	\WP_CLI::add_command( 'mcp validate-tools', ValidateToolsCommand::class ); // phpcs:ignore
+}
+
+// Register WP-CLI commands when CLI is loaded.
+add_action( 'cli_init', 'register_wordpress_mcp_cli_commands' );
