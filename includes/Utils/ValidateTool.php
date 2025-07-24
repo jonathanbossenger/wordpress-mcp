@@ -11,8 +11,8 @@ class ValidateTool {
 	/**
 	 * Validation levels.
 	 */
-	public const LEVEL_STRICT = 'strict';
-	public const LEVEL_EXTENDED = 'extended';
+	public const LEVEL_STRICT     = 'strict';
+	public const LEVEL_EXTENDED   = 'extended';
 	public const LEVEL_PERMISSIVE = 'permissive';
 
 	/**
@@ -64,17 +64,17 @@ class ValidateTool {
 	 */
 	public static function validate_with_level( array $tool, string $level ): array {
 		$result = array(
-			'name' => $tool['name'] ?? '',
-			'type' => $tool['type'] ?? 'unknown',
-			'enabled' => $tool['enabled'] ?? false,
-			'tool_enabled' => $tool['tool_enabled'] ?? false,
-			'tool_type_enabled' => $tool['tool_type_enabled'] ?? false,
+			'name'                  => $tool['name'] ?? '',
+			'type'                  => $tool['type'] ?? 'unknown',
+			'enabled'               => $tool['enabled'] ?? false,
+			'tool_enabled'          => $tool['tool_enabled'] ?? false,
+			'tool_type_enabled'     => $tool['tool_type_enabled'] ?? false,
 			'disabled_by_rest_crud' => $tool['disabled_by_rest_crud'] ?? false,
-			'has_rest_alias' => ! empty( $tool['rest_alias'] ),
-			'valid' => true,
-			'errors' => array(),
-			'warnings' => array(),
-			'validation_level' => $level,
+			'has_rest_alias'        => ! empty( $tool['rest_alias'] ),
+			'valid'                 => true,
+			'errors'                => array(),
+			'warnings'              => array(),
+			'validation_level'      => $level,
 		);
 
 		try {
@@ -91,7 +91,7 @@ class ValidateTool {
 				self::validate_with_schemas( $tool, $result, $level );
 			}
 		} catch ( \Exception $e ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = $e->getMessage();
 		}
 
@@ -122,28 +122,28 @@ class ValidateTool {
 	 * @return array Summary statistics.
 	 */
 	public static function get_validation_summary( array $validation_results ): array {
-		$total = count( $validation_results );
-		$valid = 0;
-		$invalid = 0;
+		$total    = count( $validation_results );
+		$valid    = 0;
+		$invalid  = 0;
 		$warnings = 0;
 
 		foreach ( $validation_results as $result ) {
 			if ( $result['valid'] ) {
-				$valid++;
+				++$valid;
 				if ( ! empty( $result['warnings'] ) ) {
-					$warnings++;
+					++$warnings;
 				}
 			} else {
-				$invalid++;
+				++$invalid;
 			}
 		}
 
 		return array(
-			'total' => $total,
-			'valid' => $valid,
-			'invalid' => $invalid,
+			'total'               => $total,
+			'valid'               => $valid,
+			'invalid'             => $invalid,
 			'valid_with_warnings' => $warnings,
-			'success_rate' => $total > 0 ? ( $valid / $total ) * 100 : 0,
+			'success_rate'        => $total > 0 ? ( $valid / $total ) * 100 : 0,
 		);
 	}
 
@@ -450,7 +450,7 @@ class ValidateTool {
 			if ( is_array( $callable ) && 2 === count( $callable ) ) {
 				// Array format [class/object, method] - valid format.
 				$class_or_object = $callable[0];
-				$method = $callable[1];
+				$method          = $callable[1];
 
 				if ( ! is_string( $method ) ) {
 					self::add_issue( $result, "Field '{$field_name}' array format requires method name as string.", $level );
@@ -559,7 +559,7 @@ class ValidateTool {
 		if ( self::LEVEL_PERMISSIVE === $level ) {
 			$result['warnings'][] = $message;
 		} else {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = $message;
 		}
 	}

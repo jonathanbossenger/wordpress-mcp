@@ -116,7 +116,6 @@ class ToolsHandler {
 			}
 
 			return $response;
-
 		} catch ( \Throwable $exception ) {
 			McpErrorHandler::log_error(
 				'Error calling tool',

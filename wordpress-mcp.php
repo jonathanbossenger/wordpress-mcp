@@ -52,7 +52,7 @@ function WPMCP() { // phpcs:ignore
 /**
  * Initialize the plugin.
  */
-function init_wordpress_mcp() {
+function wordpress_mcp_init() {
 	$mcp = WPMCP();
 
 	// Initialize the STDIO transport.
@@ -69,12 +69,12 @@ function init_wordpress_mcp() {
 }
 
 // Initialize the plugin.
-add_action( 'init', 'init_wordpress_mcp' );
+add_action( 'init', 'wordpress_mcp_init' );
 
 /**
  * Register WP-CLI commands when WP-CLI is available.
  */
-function register_wordpress_mcp_cli_commands() {
+function wordpress_mcp_register_cli_commands() {
 	if ( ! class_exists( '\WP_CLI' ) ) {
 		return;
 	}
@@ -83,4 +83,4 @@ function register_wordpress_mcp_cli_commands() {
 }
 
 // Register WP-CLI commands when CLI is loaded.
-add_action( 'cli_init', 'register_wordpress_mcp_cli_commands' );
+add_action( 'cli_init', 'wordpress_mcp_register_cli_commands' );

@@ -68,7 +68,7 @@ class SchemaValidator {
 
 		// Cache the schema.
 		self::$schema_cache[ $cache_key ] = array(
-			'schema' => $schema,
+			'schema'    => $schema,
 			'timestamp' => time(),
 		);
 
@@ -84,14 +84,14 @@ class SchemaValidator {
 	 */
 	public static function validate_against_schema( array $data, array $schema ): array {
 		$result = array(
-			'valid' => true,
+			'valid'  => true,
 			'errors' => array(),
 		);
 
 		try {
 			self::validate_schema_recursive( $data, $schema, '', $result );
 		} catch ( \Exception $e ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = $e->getMessage();
 		}
 
@@ -126,7 +126,7 @@ class SchemaValidator {
 			return self::validate_against_schema( $tool, $tool_schema );
 		} catch ( \Exception $e ) {
 			return array(
-				'valid' => false,
+				'valid'  => false,
 				'errors' => array( 'Schema validation failed: ' . $e->getMessage() ),
 			);
 		}
@@ -144,7 +144,7 @@ class SchemaValidator {
 			return self::validate_against_schema( $tool, $wp_schema );
 		} catch ( \Exception $e ) {
 			return array(
-				'valid' => false,
+				'valid'  => false,
 				'errors' => array( 'WordPress schema validation failed: ' . $e->getMessage() ),
 			);
 		}
@@ -249,7 +249,7 @@ class SchemaValidator {
 		$actual_type = self::get_json_type( $data );
 
 		if ( $actual_type !== $expected_type ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "Type mismatch at '{$path}': expected {$expected_type}, got {$actual_type}";
 			return false;
 		}
@@ -271,7 +271,7 @@ class SchemaValidator {
 		if ( isset( $schema['required'] ) && is_array( $schema['required'] ) ) {
 			foreach ( $schema['required'] as $required_prop ) {
 				if ( ! isset( $data[ $required_prop ] ) ) {
-					$result['valid'] = false;
+					$result['valid']    = false;
 					$result['errors'][] = "Missing required property '{$required_prop}' at '{$path}'";
 				}
 			}
@@ -284,7 +284,7 @@ class SchemaValidator {
 					$prop_path = $path ? "{$path}.{$prop_name}" : $prop_name;
 					self::validate_schema_recursive( $prop_value, $schema['properties'][ $prop_name ], $prop_path, $result );
 				} elseif ( isset( $schema['additionalProperties'] ) && false === $schema['additionalProperties'] ) {
-					$result['valid'] = false;
+					$result['valid']    = false;
 					$result['errors'][] = "Additional property '{$prop_name}' not allowed at '{$path}'";
 				}
 			}
@@ -312,12 +312,12 @@ class SchemaValidator {
 
 		// Validate array constraints.
 		if ( isset( $schema['minItems'] ) && count( $data ) < $schema['minItems'] ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "Array at '{$path}' has too few items (minimum: {$schema['minItems']})";
 		}
 
 		if ( isset( $schema['maxItems'] ) && count( $data ) > $schema['maxItems'] ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "Array at '{$path}' has too many items (maximum: {$schema['maxItems']})";
 		}
 	}
@@ -334,18 +334,18 @@ class SchemaValidator {
 	private static function validate_string_constraints( string $data, array $schema, string $path, array &$result ): void {
 		// Length constraints.
 		if ( isset( $schema['minLength'] ) && strlen( $data ) < $schema['minLength'] ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "String at '{$path}' is too short (minimum length: {$schema['minLength']})";
 		}
 
 		if ( isset( $schema['maxLength'] ) && strlen( $data ) > $schema['maxLength'] ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "String at '{$path}' is too long (maximum length: {$schema['maxLength']})";
 		}
 
 		// Pattern validation.
 		if ( isset( $schema['pattern'] ) && ! preg_match( '/' . preg_quote( $schema['pattern'], '/' ) . '/', $data ) ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "String at '{$path}' does not match pattern '{$schema['pattern']}'";
 		}
 	}
@@ -361,17 +361,17 @@ class SchemaValidator {
 	 */
 	private static function validate_numeric_constraints( float $data, array $schema, string $path, array &$result ): void {
 		if ( isset( $schema['minimum'] ) && $data < $schema['minimum'] ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "Number at '{$path}' is below minimum ({$schema['minimum']})";
 		}
 
 		if ( isset( $schema['maximum'] ) && $data > $schema['maximum'] ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "Number at '{$path}' exceeds maximum ({$schema['maximum']})";
 		}
 
 		if ( isset( $schema['multipleOf'] ) && fmod( $data, $schema['multipleOf'] ) !== 0.0 ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "Number at '{$path}' is not a multiple of {$schema['multipleOf']}";
 		}
 	}
@@ -387,8 +387,8 @@ class SchemaValidator {
 	 */
 	private static function validate_enum( $data, array $enum_values, string $path, array &$result ): void {
 		if ( ! in_array( $data, $enum_values, true ) ) {
-			$allowed = implode( ', ', array_map( 'json_encode', $enum_values ) );
-			$result['valid'] = false;
+			$allowed            = implode( ', ', array_map( 'json_encode', $enum_values ) );
+			$result['valid']    = false;
 			$result['errors'][] = "Value at '{$path}' must be one of: {$allowed}";
 		}
 	}
@@ -404,18 +404,18 @@ class SchemaValidator {
 	 */
 	private static function validate_one_of( $data, array $schemas, string $path, array &$result ): void {
 		$valid_schemas = 0;
-		$errors = array();
+		$errors        = array();
 
 		foreach ( $schemas as $index => $schema ) {
 			$sub_result = array(
-				'valid' => true,
+				'valid'  => true,
 				'errors' => array(),
 			);
 
 			self::validate_schema_recursive( $data, $schema, $path, $sub_result );
 
 			if ( $sub_result['valid'] ) {
-				$valid_schemas++;
+				++$valid_schemas;
 			} else {
 				$errors[] = "Schema {$index}: " . implode( ', ', $sub_result['errors'] );
 			}
@@ -442,25 +442,25 @@ class SchemaValidator {
 	 */
 	private static function validate_any_of( $data, array $schemas, string $path, array &$result ): void {
 		$valid_schemas = 0;
-		$errors = array();
+		$errors        = array();
 
 		foreach ( $schemas as $index => $schema ) {
 			$sub_result = array(
-				'valid' => true,
+				'valid'  => true,
 				'errors' => array(),
 			);
 
 			self::validate_schema_recursive( $data, $schema, $path, $sub_result );
 
 			if ( $sub_result['valid'] ) {
-				$valid_schemas++;
+				++$valid_schemas;
 			} else {
 				$errors[] = "Schema {$index}: " . implode( ', ', $sub_result['errors'] );
 			}
 		}
 
 		if ( 0 === $valid_schemas ) {
-			$result['valid'] = false;
+			$result['valid']    = false;
 			$result['errors'][] = "Value at '{$path}' does not match any of the expected schemas: " . implode( '; ', $errors );
 		}
 	}
@@ -493,4 +493,4 @@ class SchemaValidator {
 
 		return 'unknown';
 	}
-} 
+}

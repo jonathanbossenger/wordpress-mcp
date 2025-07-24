@@ -615,7 +615,6 @@ class JwtAuth {
 			$this->log_auth_event( 'JWT_AUTH_SUCCESS', "User {$user->user_login} authenticated via JWT" );
 
 			return true;
-
 		} catch ( Exception $e ) {
 			$this->log_auth_event( 'JWT_DECODE_ERROR', $e->getMessage() );
 			return new WP_Error(
@@ -690,7 +689,6 @@ class JwtAuth {
 			// Set current user.
 			wp_set_current_user( $user->ID );
 			return true;
-
 		} catch ( Exception $e ) {
 			// Not a valid JWT, let other authenticators try.
 			return $result;

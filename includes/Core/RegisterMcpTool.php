@@ -93,7 +93,6 @@ class RegisterMcpTool {
 		);
 
 		foreach ( $rest_api['args'] as $arg_name => $arg_schema ) {
-
 			if ( ! preg_match( '/^[a-zA-Z0-9_-]{1,64}$/', $arg_name ) ) {
 				// log the invalid parameter name.
 				McpErrorHandler::log_error( 'Invalid parameter name: ' . $arg_name . ' in ' . $route . ' ' . $method . '. The parameter was skipped.' );

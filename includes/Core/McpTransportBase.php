@@ -116,7 +116,6 @@ abstract class McpTransportBase {
 			};
 
 			return $result;
-
 		} catch ( \Throwable $exception ) {
 			return $this->handle_exception( $exception, $request_id );
 		}
@@ -143,12 +142,12 @@ abstract class McpTransportBase {
 	 */
 	private function handle_prompt_get( array $params ): array {
 		$result = $this->prompts_handler->get_prompt( $params );
-		
+
 		// Handle the nested result structure from the handler
 		if ( isset( $result['result'] ) ) {
 			return $result['result'];
 		}
-		
+
 		return $result;
 	}
 
@@ -194,4 +193,4 @@ abstract class McpTransportBase {
 	 * @return bool|WP_Error
 	 */
 	abstract public function check_permission(): WP_Error|bool;
-} 
+}
