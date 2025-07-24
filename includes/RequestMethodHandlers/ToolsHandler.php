@@ -45,7 +45,6 @@ class ToolsHandler {
 	/**
 	 * Handle the tools/list/all request.
 	 *
-	 * @param array $params Request parameters.
 	 * @return array
 	 */
 	public function list_all_tools(): array {
