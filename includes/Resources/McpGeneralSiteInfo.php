@@ -48,7 +48,7 @@ class McpGeneralSiteInfo {
 	 *
 	 * @return array
 	 */
-	public function get_site_info( array $params = array() ): array {
+	public function get_site_info(): array {
 
 		$site_info = array(
 			'site_name'         => get_bloginfo( 'name' ),
