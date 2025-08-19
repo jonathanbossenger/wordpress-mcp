@@ -94,7 +94,7 @@ class McpRestApiCrud {
 		new RegisterMcpTool(
 			array(
 				'name'                => 'run_api_function',
-				'description'         => 'Execute a specific WordPress REST API function by providing the endpoint route, HTTP method, and any required parameters or request body. Supports standard CRUD operations: GET (read), POST (create), PATCH (update), DELETE (remove).',
+				'description'         => 'Execute a specific WordPress REST API function by providing the endpoint route, HTTP method, and any required parameters or request body. Supports standard CRUD operations: GET (read), POST (create), PATCH (update), DELETE (remove). For GET requests, pagination parameters (per_page, page, offset) can be provided either in the "data" object or directly in the route query string (e.g., "/wp/v2/posts?per_page=100").',
 				'type'                => 'action',
 				'inputSchema'         => array(
 					'type'       => 'object',
@@ -110,7 +110,7 @@ class McpRestApiCrud {
 						),
 						'data'   => array(
 							'type'        => 'object',
-							'description' => 'Payload for POST or PATCH requests. Not required for GET or DELETE.',
+							'description' => 'For POST/PATCH requests: request body payload. For GET/DELETE requests: query parameters (e.g., {"per_page": 100, "page": 2}). Not required for GET or DELETE.',
 						),
 					),
 					'required'   => array( 'route', 'method' ),
@@ -137,7 +137,25 @@ class McpRestApiCrud {
 	public function handle_tool_run_request( array $data ): array {
 		$route  = $data['route'];
 		$method = $data['method'];
-		$data   = $data['data'];
+		$data   = $data['data'] ?? array();
+
+		// Parse query parameters from route if they exist (e.g., /wp/v2/posts?per_page=100).
+		$parsed_route  = $route;
+		$query_params  = array();
+		
+		if ( strpos( $route, '?' ) !== false ) {
+			$route_parts  = explode( '?', $route, 2 );
+			$parsed_route = $route_parts[0];
+			$query_string = $route_parts[1];
+			
+			// Parse query string into array.
+			parse_str( $query_string, $query_params );
+		}
+
+		// Merge query params from route with data params for GET requests.
+		if ( 'GET' === $method && ! empty( $data ) ) {
+			$query_params = array_merge( $query_params, $data );
+		}
 
 		// Get settings to check if operations are enabled.
 		$settings = get_option( 'wordpress_mcp_settings', array() );
@@ -171,8 +189,22 @@ class McpRestApiCrud {
 				break;
 		}
 
-		$rest_request = new WP_REST_Request( $method, $route );
-		$rest_request->set_body_params( $data );
+		// Create REST request with the cleaned route (without query params).
+		$rest_request = new WP_REST_Request( $method, $parsed_route );
+
+		// Set parameters based on HTTP method.
+		if ( 'GET' === $method || 'DELETE' === $method ) {
+			// For GET and DELETE requests, use query parameters.
+			if ( ! empty( $query_params ) ) {
+				$rest_request->set_query_params( $query_params );
+			}
+		} else {
+			// For POST, PATCH, PUT requests, use body parameters.
+			if ( ! empty( $data ) ) {
+				$rest_request->set_body_params( $data );
+			}
+		}
+
 		$response = rest_do_request( $rest_request );
 		return $response->get_data();
 	}
