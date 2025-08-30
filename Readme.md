@@ -1,3 +1,13 @@
+# Deprecation Notice
+
+This repository will be deprecated as the [mcp-adapter](https://github.com/Automattic/mcp-adapter) project continues releasing stable versions.  
+
+The shift aligns with two important developments:
+- The Abilities API is moving into WordPress Core as of version 6.9.
+- mcp-adapter is now stable and will become the canonical plugin and Composer package for MCP integration.
+
+We encourage all users to migrate to mcp-adapter. Future work, including new features and fixes, will happen there. This repository will remain available in archived form for historical reference.
+
 # WordPress MCP
 
 [![Latest Release](https://img.shields.io/github/v/release/Automattic/wordpress-mcp)](https://github.com/Automattic/wordpress-mcp/releases)
