@@ -1,10 +1,8 @@
-# Deprecation Notice
-
-This repository will be deprecated as the [mcp-adapter](https://github.com/Automattic/mcp-adapter) project continues releasing stable versions.  
+This repository will be deprecated as the [mcp-adapter](https://github.com/wordpress/mcp-adapter) AI Building Block for WordPress continues releasing stable versions.  
 
 The shift aligns with two important developments:
-- The Abilities API is moving into WordPress Core as of version 6.9.
-- mcp-adapter is now stable and will become the canonical plugin and Composer package for MCP integration.
+- The [Abilities API](https://github.com/WordPress/abilities-api) is moving into WordPress Core as of version 6.9.
+- mcp-adapter is now stable and will become the canonical plugin and Composer package for MCP integration in WordPress.
 
 We encourage all users to migrate to mcp-adapter. Future work, including new features and fixes, will happen there. This repository will remain available in archived form for historical reference.
 
